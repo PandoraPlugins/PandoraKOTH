@@ -1,11 +1,14 @@
 package me.nanigans.pandorakoth.Koth.Inventories;
 
+import me.nanigans.pandorakoth.Koth.Utility.NBTData;
 import me.nanigans.pandorakoth.PandoraKOTH;
 import me.nanigans.pandorakoth.Utils.YamlGenerator;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -40,12 +43,27 @@ public abstract class NavigatorInventory implements Listener {
         }
     }
 
+    protected void handleClick(InventoryClickEvent event, Map<String, Methods> methods){
+        if(event.getInventory().equals(this.inventory)){
+            event.setCancelled(true);
+            player.playSound(player.getLocation(), Sound.valueOf("CLICK"), 1, 1);
+            final ItemStack item = event.getCurrentItem();
+            if(item != null){
+                if (NBTData.containsNBT(item, "METHOD")) {
+                    final String method = NBTData.getNBT(item, "METHOD");
+                    execute(methods, method, item);
+                }
+            }
+
+        }
+    }
+
     protected void execute(Map<String, Methods> methods, String method, ItemStack item){
         if(methods.containsKey(method))
             methods.get(method).execute(item);
     }
 
-    protected abstract void back();
+    protected abstract void back(ItemStack _);
 
     protected void swapInventories(NavigatorInventory inv){
         final Inventory inventory = inv.createInventory();

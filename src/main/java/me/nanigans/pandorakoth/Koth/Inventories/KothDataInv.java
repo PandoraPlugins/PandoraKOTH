@@ -17,22 +17,23 @@ import java.util.Map;
 
 public class KothDataInv extends NavigatorInventory implements Listener {
 
-    private final Map<String, Methods> methodsMap = new HashMap<String, Methods>(){{
+    private final Map<String, Methods> methods = new HashMap<String, Methods>(){{
         put("openRewards", KothDataInv.this::openRewards);
         put("toggleEnabled", KothDataInv.this::toggleEnabled);
         put("setTime", KothDataInv.this::setTime);
+        put("back", KothDataInv.this::back);
 
     }};
+    private final String kothEventName;
 
-    public KothDataInv(Player player, YamlGenerator yaml, String kothName) {
+    public KothDataInv(Player player, YamlGenerator yaml, String kothName, String kothEventName) {
         super(player, yaml, kothName);
+        this.kothEventName = kothEventName;
     }
 
     @EventHandler
     public void onClick(InventoryClickEvent event){
-
-
-
+        handleClick(event, methods);
     }
 
     private void openRewards(ItemStack item){
@@ -40,13 +41,16 @@ public class KothDataInv extends NavigatorInventory implements Listener {
     }
     private void toggleEnabled(ItemStack item){
 
+
+
     }
     private void setTime(ItemStack item){
 
     }
 
     @Override
-    protected void back() {
+    protected void back(ItemStack _) {
+        System.out.println("1 = " + 1);
         HandlerList.unregisterAll(this);
         swapInventories(new KothEditorInv(yaml, player, kothName));
     }

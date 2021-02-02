@@ -35,40 +35,29 @@ public class KothEditorInv extends NavigatorInventory implements Listener {
 
     @EventHandler
     public void onInvClick(InventoryClickEvent event){
-
-        if(event.getInventory().equals(this.inventory)){
-            event.setCancelled(true);
-            player.playSound(player.getLocation(), Sound.valueOf("CLICK"), 1, 1);
-            final ItemStack item = event.getCurrentItem();
-            if(item != null){
-                if (NBTData.containsNBT(item, "METHOD")) {
-                    final String method = NBTData.getNBT(item, "METHOD");
-                    execute(methods, method, item);
-                }
-            }
-
-        }
-
+        handleClick(event, methods);
     }
 
     private void openKoth(ItemStack item){
 
         final String kothName = item.getItemMeta().getDisplayName();
-
+        swapInventories(new KothDataInv(player, yaml, kothName, kothName));
 
     }
 
     private void createKothTime(ItemStack item){
 
         final int size = yaml.getData().getKeys(false).size();
-        yaml.getData().set(kothName + "_"+ size, new HashMap<>());
+        final String name = kothName + "_" + size;
+        yaml.getData().set(name, new HashMap<>());
         yaml.save();
         HandlerList.unregisterAll(this);
-        swapInventories(new KothDataInv(player, yaml, kothName));
+        swapInventories(new KothDataInv(player, yaml, kothName, name));
     }
 
     @Override
-    protected void back() {
+    protected void back(ItemStack _) {
+        System.out.println("1 = " + 4);
     }
 
     @Override
