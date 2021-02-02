@@ -1,0 +1,13 @@
+Koth 1:
+  enabled: true
+  time:
+    type: "REPEAT"
+    timer: 100 # in minutes
+    capDuration: 10000
+  rewards:
+    - /give <player> dirt 64
+Koth 2:
+  enabled: false
+  time:
+    type: "ONCE"
+    timer:

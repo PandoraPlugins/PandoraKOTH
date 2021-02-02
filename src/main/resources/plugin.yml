@@ -1,0 +1,18 @@
+name: PandoraKOTH
+version: ${project.version}
+main: me.nanigans.pandorakoth.PandoraKOTH
+authors: [ ProNanigans ]
+description: A Koth plugin for PandoraPVP
+depend:
+  - WorldGuard
+commands:
+  kothedit:
+    description: Allows you to edit data about a koth location. The region name must have the flag of 'is-koth'
+    usage: /kothedit <region name>
+permissions:
+  Koth.Edit:
+    default: op
+    description: Allows the user to use the kothedit command
+  Koth.Delete:
+    description: Allows the user to delete a KOTH
+    default: op
