@@ -5,22 +5,17 @@ import me.nanigans.pandorakoth.PandoraKOTH;
 import me.nanigans.pandorakoth.Utils.YamlGenerator;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Map;
 
 @FunctionalInterface
 interface Methods{
     void execute(ItemStack itemClicked);
 }
 
-public abstract class NavigatorInventory{
+public abstract class NavigatorInventory implements Listener{
 
     protected final Player player;
     protected final YamlGenerator yaml;

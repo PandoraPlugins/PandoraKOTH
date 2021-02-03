@@ -30,7 +30,7 @@ public class KothEditorInv extends NavigatorInventory implements Listener {
     }};
 
     public KothEditorInv(YamlGenerator yaml, Player player, String kothArea){
-        super(player, yaml, kothArea);
+        super(player, yaml, kothArea.split("_")[0]);
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         swapInventories(this);
     }
@@ -51,17 +51,16 @@ public class KothEditorInv extends NavigatorInventory implements Listener {
 
         final String kothName = item.getItemMeta().getDisplayName();
         HandlerList.unregisterAll(this);
-        swapInventories(new KothDataInv(player, yaml, kothName, kothName));
+        swapInventories(new KothDataInv(player, yaml, kothName));
 
     }
 
     private void createKothTime(ItemStack item){
-        final int size = yaml.getData().getKeys(false).size();
-        final String name = kothName + "_" + size;
+        final String name = kothName + "_" + String.valueOf(System.currentTimeMillis()).substring(7);
         yaml.getData().set(name, new HashMap<>());
         yaml.save();
         HandlerList.unregisterAll(this);
-        swapInventories(new KothDataInv(player, yaml, kothName, name));
+        swapInventories(new KothDataInv(player, yaml, name));
     }
 
     @Override
