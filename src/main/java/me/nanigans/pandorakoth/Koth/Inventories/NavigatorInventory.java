@@ -20,12 +20,12 @@ interface Methods{
     void execute(ItemStack itemClicked);
 }
 
-public abstract class NavigatorInventory implements Listener {
+public abstract class NavigatorInventory{
 
     protected final Player player;
     protected final YamlGenerator yaml;
     protected final String kothName;
-    private boolean isSwitching = false;
+    protected boolean isSwitching = false;
     protected final static PandoraKOTH plugin = PandoraKOTH.getPlugin(PandoraKOTH.class);
     protected Inventory inventory;
 
@@ -33,17 +33,9 @@ public abstract class NavigatorInventory implements Listener {
         this.player = player;
         this.yaml = yaml;
         this.kothName = kothName;
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    @EventHandler
-    public void onInvClose(InventoryCloseEvent event){
-        if(event.getInventory().equals(this.inventory) && !isSwitching){
-            HandlerList.unregisterAll(this);
-        }
-    }
-
-    protected void handleClick(InventoryClickEvent event, Map<String, Methods> methods){
+    protected void handleClick(InventoryClickEvent event){
         if(event.getInventory().equals(this.inventory)){
             event.setCancelled(true);
             player.playSound(player.getLocation(), Sound.valueOf("CLICK"), 1, 1);
@@ -51,24 +43,21 @@ public abstract class NavigatorInventory implements Listener {
             if(item != null){
                 if (NBTData.containsNBT(item, "METHOD")) {
                     final String method = NBTData.getNBT(item, "METHOD");
-                    execute(methods, method, item);
+                    execute(method, item);
                 }
             }
 
         }
     }
 
-    protected void execute(Map<String, Methods> methods, String method, ItemStack item){
-        if(methods.containsKey(method))
-            methods.get(method).execute(item);
-    }
+    protected abstract void execute(String method, ItemStack item);
 
-    protected abstract void back(ItemStack _);
+    protected abstract void back(ItemStack ignored);
 
     protected void swapInventories(NavigatorInventory inv){
-        final Inventory inventory = inv.createInventory();
         isSwitching = true;
-        this.inventory = inventory;
+        final Inventory inventory = inv.createInventory();
+        inv.inventory = inventory;
         player.openInventory(inventory);
         isSwitching = false;
     }

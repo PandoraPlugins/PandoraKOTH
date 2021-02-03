@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -30,23 +31,31 @@ public class KothEditorInv extends NavigatorInventory implements Listener {
 
     public KothEditorInv(YamlGenerator yaml, Player player, String kothArea){
         super(player, yaml, kothArea);
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
         swapInventories(this);
     }
 
     @EventHandler
     public void onInvClick(InventoryClickEvent event){
-        handleClick(event, methods);
+        handleClick(event);
+    }
+
+    @EventHandler
+    public void onInvClose(InventoryCloseEvent event){
+        if(event.getInventory().equals(this.inventory) && !isSwitching){
+            HandlerList.unregisterAll(this);
+        }
     }
 
     private void openKoth(ItemStack item){
 
         final String kothName = item.getItemMeta().getDisplayName();
+        HandlerList.unregisterAll(this);
         swapInventories(new KothDataInv(player, yaml, kothName, kothName));
 
     }
 
     private void createKothTime(ItemStack item){
-
         final int size = yaml.getData().getKeys(false).size();
         final String name = kothName + "_" + size;
         yaml.getData().set(name, new HashMap<>());
@@ -56,8 +65,13 @@ public class KothEditorInv extends NavigatorInventory implements Listener {
     }
 
     @Override
-    protected void back(ItemStack _) {
-        System.out.println("1 = " + 4);
+    protected void execute(String method, ItemStack item){
+        if(methods.containsKey(method))
+            methods.get(method).execute(item);
+    }
+
+    @Override
+    protected void back(ItemStack ignored) {
     }
 
     @Override

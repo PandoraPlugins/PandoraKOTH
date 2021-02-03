@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -29,28 +30,41 @@ public class KothDataInv extends NavigatorInventory implements Listener {
     public KothDataInv(Player player, YamlGenerator yaml, String kothName, String kothEventName) {
         super(player, yaml, kothName);
         this.kothEventName = kothEventName;
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     @EventHandler
     public void onClick(InventoryClickEvent event){
-        handleClick(event, methods);
+        handleClick(event);
+    }
+
+    @Override
+    protected void execute(String method, ItemStack item) {
+        if(methods.containsKey(method))
+            methods.get(method).execute(item);
+    }
+
+    @EventHandler
+    public void onInvClose(InventoryCloseEvent event){
+        if(event.getInventory().equals(this.inventory) && !isSwitching){
+            HandlerList.unregisterAll(this);
+        }
     }
 
     private void openRewards(ItemStack item){
 
     }
+
     private void toggleEnabled(ItemStack item){
 
-
-
     }
+
     private void setTime(ItemStack item){
 
     }
 
     @Override
-    protected void back(ItemStack _) {
-        System.out.println("1 = " + 1);
+    protected void back(ItemStack ignored) {
         HandlerList.unregisterAll(this);
         swapInventories(new KothEditorInv(yaml, player, kothName));
     }
