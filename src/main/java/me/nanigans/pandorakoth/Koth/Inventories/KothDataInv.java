@@ -54,7 +54,7 @@ public class KothDataInv extends NavigatorInventory implements Listener {
 
     private void openRewards(ItemStack item){
         HandlerList.unregisterAll(this);
-        swapInventories(new KothRewardsInv(player, yaml, kothName, kothEventName));
+        swapInventories(new KothRewardsInv(player, yaml, kothName));
     }
 
     private void toggleEnabled(ItemStack item){
@@ -88,7 +88,7 @@ public class KothDataInv extends NavigatorInventory implements Listener {
         final Inventory inv = Bukkit.createInventory(player, 36, "Event Data");
 
         inv.setItem(11, ItemUtils.createItem(Material.BOOK_AND_QUILL, "Rewards", "METHOD~openRewards"));
-        inv.setItem(13, ItemUtils.createItem(KothEditorInv.timeIsEnabled(yaml.getData(), kothName), "Toggle Enabled", "METHOD~toggleEnabled"));
+        inv.setItem(13, ItemUtils.createItem(KothEditorInv.timeIsEnabled(yaml.getData(), kothName), "Toggle Event", "METHOD~toggleEnabled"));
         inv.setItem(15, ItemUtils.createItem(Material.WATCH, "Set Time", "METHOD~setTime"));
         inv.setItem(22, ItemUtils.createItem(Material.COMPASS, "Back", "METHOD~back"));
         if(yaml.isNew()){

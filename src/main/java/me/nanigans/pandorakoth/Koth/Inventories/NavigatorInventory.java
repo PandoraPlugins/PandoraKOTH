@@ -56,6 +56,9 @@ public abstract class NavigatorInventory implements Listener{
         player.openInventory(inventory);
         isSwitching = false;
     }
+    protected int calcInvSize(int input){
+        return Math.min(Math.min(input - (input % 9), 36) + 18, 54);
+    }
 
     protected abstract Inventory createInventory();
 
