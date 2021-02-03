@@ -23,8 +23,8 @@ public class KothDataInv extends NavigatorInventory implements Listener {
         put("toggleEnabled", KothDataInv.this::toggleEnabled);
         put("setTime", KothDataInv.this::setTime);
         put("back", KothDataInv.this::back);
-
     }};
+
     private final String kothEventName;
 
     public KothDataInv(Player player, YamlGenerator yaml, String kothName, String kothEventName) {
