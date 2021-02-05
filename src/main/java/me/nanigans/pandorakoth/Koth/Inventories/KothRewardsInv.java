@@ -27,8 +27,8 @@ enum RewardType{
     SYNCED("Synced", "Synced"),
     CAPPER("For Capturer", "Capturer"),
     OWNER("For Owner", "Owner");
-    private String name;
-    private String yamlName;
+    private final String name;
+    private final String yamlName;
     RewardType(String displayName, String yamlName) {
         this.name = displayName;
         this.yamlName = yamlName;
@@ -78,7 +78,7 @@ public class KothRewardsInv extends NavigatorInventory implements Listener {
 
             if(isItemDropped && NBTData.containsNBT(itemClicked, "isDeletable")){
                 removeReward(itemClicked);
-            }else if(event.getClick() == ClickType.LEFT && itemClicked.getType() == Material.PAPER){
+            }else if(event.getClick() == ClickType.LEFT && NBTData.containsNBT(itemClicked, "ID")){
                 final ItemStack newItem = swapRewardType(itemClicked);
                 final int slot = event.getSlot();
                 setDisplayLore(newItem, NBTData.getNBT(newItem, "rewardType"));
@@ -110,8 +110,9 @@ public class KothRewardsInv extends NavigatorInventory implements Listener {
     private ItemStack swapRewardType(ItemStack itemClicked){
 
         final String rewardType = NBTData.getNBT(itemClicked, "rewardType");
-        final RewardType next = RewardType.getByYMLName(rewardType).next();
+        RewardType next = RewardType.getByYMLName(rewardType);
         if(next != null) {
+            next = next.next();
             final List<Map<?, ?>> mapList = yaml.getData().getMapList(kothName + ".rewards");
             final Map<String, String> id = (Map<String, String>) getRewardFromList(mapList, NBTData.getNBT(itemClicked, "ID"));
             if(id != null)
