@@ -4,6 +4,8 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.Arrays;
+
 public class ItemUtils {
 
     /**
@@ -41,6 +43,14 @@ public class ItemUtils {
         item = NBTData.setNBT(item, nbt);
         return item;
 
+    }
+
+
+    public static ItemStack setLore(ItemStack item, String... lore){
+        final ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setLore(Arrays.asList(lore));
+        item.setItemMeta(itemMeta);
+        return item;
     }
 
 }
