@@ -1,6 +1,7 @@
 package me.nanigans.pandorakoth.Koth.Inventories;
 
 import me.nanigans.pandorakoth.Koth.Utility.ItemUtils;
+import me.nanigans.pandorakoth.Utils.AwaitInput;
 import me.nanigans.pandorakoth.Utils.Title;
 import me.nanigans.pandorakoth.Utils.YamlGenerator;
 import org.bukkit.Bukkit;
@@ -12,7 +13,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -29,7 +29,6 @@ public class KothRewardsInv extends NavigatorInventory implements Listener {
         put("back", KothRewardsInv.this::back);
         put("addReward", KothRewardsInv.this::addReward);
     }};
-    private volatile String inputMsg;
 
     public KothRewardsInv(Player player, YamlGenerator yaml, String kothName) {
         super(player, yaml, kothName);
@@ -67,52 +66,24 @@ public class KothRewardsInv extends NavigatorInventory implements Listener {
         player.sendMessage(ChatColor.WHITE+"Replace the player's name with <player>");
         isSwitching = true;
         player.closeInventory();
-        new BukkitRunnable() {
-            final long time = System.currentTimeMillis()+20000;
 
-            @Override
-            public void run() {
+        new AwaitInput(player, 20000, msg -> {
 
-                while(System.currentTimeMillis() < time){
-
-                    if(inputMsg != null){
-
-                        final List<String> rewards = yaml.getData().getStringList(kothName + ".rewards");
-                        rewards.add(inputMsg);
-                        yaml.getData().set(kothName+".rewards", rewards);
-                        yaml.save();
-                        inputMsg = null;
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                HandlerList.unregisterAll(KothRewardsInv.this);
-                                swapInventories(new KothRewardsInv(player, yaml, kothName));
-                            }
-                        }.runTask(plugin);
-                        this.cancel();
-                        break;
-                    }
-
-                }
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        HandlerList.unregisterAll(KothRewardsInv.this);
-                        swapInventories(new KothRewardsInv(player, yaml, kothName));
-                    }
-                }.runTask(plugin);                this.cancel();
-
+            if(msg != null) {
+                final List<String> rewards = yaml.getData().getStringList(kothName + ".rewards");
+                rewards.add(msg);
+                yaml.getData().set(kothName + ".rewards", rewards);
+                yaml.save();
             }
-        }.runTaskAsynchronously(plugin);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    HandlerList.unregisterAll(KothRewardsInv.this);
+                    swapInventories(new KothRewardsInv(player, yaml, kothName));
+                }
+            }.runTask(plugin);
+        }).runTaskAsynchronously(plugin);
 
-    }
-
-    @EventHandler
-    public void incomingMsg(AsyncPlayerChatEvent event){
-        if(event.getPlayer().getUniqueId().equals(player.getUniqueId())){
-            inputMsg = event.getMessage();
-            event.setCancelled(true);
-        }
     }
 
     @Override

@@ -73,7 +73,6 @@ public class KothDataInv extends NavigatorInventory implements Listener {
     private void setTime(ItemStack item){
         HandlerList.unregisterAll(this);
         swapInventories(new KothTimeSetInv(player, yaml, kothName, kothEventName));
-
     }
 
     @Override

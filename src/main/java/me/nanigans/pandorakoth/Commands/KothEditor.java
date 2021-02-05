@@ -33,7 +33,7 @@ public class KothEditor implements CommandExecutor {
                         final ProtectedRegion region = regionManager.getRegion(regionName);
                         if(region != null){
 
-                            final File file = new File(plugin.getDataFolder().getAbsolutePath()+"/KOTHS/" + regionName+".yml");
+                            final File file = new File(plugin.getDataFolder().getAbsolutePath() + "/KOTHS/" + regionName + ".yml");
                             final YamlGenerator yamlGenerator = new YamlGenerator(file.getAbsolutePath());
                             new KothEditorInv(yamlGenerator, player, regionName);
 

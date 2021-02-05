@@ -16,7 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.IOException;
 
 public final class PandoraKOTH extends JavaPlugin {
-    public static Flag kothFlag;
+    public Flag kothFlag;
     public WorldGuardPlugin worldGuardPlugin = getWorldGuard();
 
     @Override
