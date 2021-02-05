@@ -54,12 +54,11 @@ public class KothEditor implements CommandExecutor {
                 }else{
                     sender.sendMessage(ChatColor.RED+"Invalid Permissions");
                 }
-                return true;
 
             }else{
                 sender.sendMessage(ChatColor.RED+"Only players may use this command");
-                return true;
             }
+            return true;
 
         }
 
