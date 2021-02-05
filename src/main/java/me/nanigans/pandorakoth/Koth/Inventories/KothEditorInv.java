@@ -93,8 +93,9 @@ public class KothEditorInv extends NavigatorInventory implements Listener {
         short inx = 0;
         for (String key : keys) {
             if(inx <= 45) {
-                final ItemStack item = ItemUtils.createItem(timeIsEnabled(data, key), key, "METHOD~openKoth", "isDeletable~true");
+                ItemStack item = ItemUtils.createItem(timeIsEnabled(data, key), key, "METHOD~openKoth");
                 if (canDelete) {
+                    item = NBTData.setNBT(item, "isDeletable~true");
                     final ItemMeta meta = item.getItemMeta();
                     meta.setLore(Collections.singletonList("Press Q to delete this KOTH event"));
                     item.setItemMeta(meta);

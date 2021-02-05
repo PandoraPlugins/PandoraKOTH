@@ -16,7 +16,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class KothDataInv extends NavigatorInventory implements Listener {
@@ -25,6 +24,7 @@ public class KothDataInv extends NavigatorInventory implements Listener {
         put("openRewards", KothDataInv.this::openRewards);
         put("toggleEnabled", KothDataInv.this::toggleEnabled);
         put("setTime", KothDataInv.this::setTime);
+        put("openMessages", KothDataInv.this::openMessages);
         put("back", KothDataInv.this::back);
     }};
 
@@ -38,7 +38,7 @@ public class KothDataInv extends NavigatorInventory implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent event){
-        final ItemStack itemClicked = handleClick(event);
+        handleClick(event);
     }
 
     @Override
@@ -52,6 +52,11 @@ public class KothDataInv extends NavigatorInventory implements Listener {
         if(event.getInventory().equals(this.inventory) && !isSwitching){
             HandlerList.unregisterAll(this);
         }
+    }
+
+    private void openMessages(ItemStack ignored){
+        HandlerList.unregisterAll(this);
+        swapInventories(new MessageInv(player, yaml, kothName));
     }
 
     private void openRewards(ItemStack item){
