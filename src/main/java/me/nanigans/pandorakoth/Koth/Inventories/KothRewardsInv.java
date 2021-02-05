@@ -1,6 +1,7 @@
 package me.nanigans.pandorakoth.Koth.Inventories;
 
 import me.nanigans.pandorakoth.Koth.Utility.ItemUtils;
+import me.nanigans.pandorakoth.Koth.Utility.NBTData;
 import me.nanigans.pandorakoth.Utils.AwaitInput;
 import me.nanigans.pandorakoth.Utils.Title;
 import me.nanigans.pandorakoth.Utils.YamlGenerator;
@@ -37,7 +38,20 @@ public class KothRewardsInv extends NavigatorInventory implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent event){
-        handleClick(event);
+        final ItemStack itemClicked = handleClick(event);
+        if(itemClicked != null && event.getAction().toString().contains("DROP")){
+
+            if(NBTData.containsNBT(itemClicked, "isDeletable")){
+
+                final List<String> stringList = yaml.getData().getStringList(kothName + ".rewards");
+                stringList.remove(itemClicked.getItemMeta().getDisplayName());
+                yaml.getData().set(kothName+".rewards", stringList);
+                yaml.save();
+                this.inventory.removeItem(itemClicked);
+
+            }
+
+        }
     }
 
     @Override
@@ -95,7 +109,7 @@ public class KothRewardsInv extends NavigatorInventory implements Listener {
         final int loopSize = Math.min(45, stringList.size());
         for (int i = 0; i < loopSize; i++) {
             final String cmd = stringList.get(i);
-            final ItemStack item = ItemUtils.createItem(Material.PAPER, cmd);
+            final ItemStack item = ItemUtils.createItem(Material.PAPER, cmd, "isDeletable~true");
             final ItemMeta itemMeta = item.getItemMeta();
             itemMeta.setLore(Collections.singletonList("Press Q to delete this reward"));
             item.setItemMeta(itemMeta);

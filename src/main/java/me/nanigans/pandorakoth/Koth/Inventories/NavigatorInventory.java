@@ -30,19 +30,21 @@ public abstract class NavigatorInventory implements Listener{
         this.kothName = kothName;
     }
 
-    protected void handleClick(InventoryClickEvent event){
+    protected ItemStack handleClick(InventoryClickEvent event){
         if(event.getInventory().equals(this.inventory)){
             event.setCancelled(true);
             player.playSound(player.getLocation(), Sound.valueOf("CLICK"), 1, 1);
             final ItemStack item = event.getCurrentItem();
             if(item != null){
-                if (NBTData.containsNBT(item, "METHOD")) {
+                if (!event.getAction().toString().contains("DROP") &&  NBTData.containsNBT(item, "METHOD")) {
                     final String method = NBTData.getNBT(item, "METHOD");
                     execute(method, item);
                 }
+                return item;
             }
 
         }
+        return null;
     }
 
     protected abstract void execute(String method, ItemStack item);

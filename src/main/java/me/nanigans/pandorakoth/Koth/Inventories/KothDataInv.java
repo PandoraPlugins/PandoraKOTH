@@ -1,6 +1,7 @@
 package me.nanigans.pandorakoth.Koth.Inventories;
 
 import me.nanigans.pandorakoth.Koth.Utility.ItemUtils;
+import me.nanigans.pandorakoth.Koth.Utility.NBTData;
 import me.nanigans.pandorakoth.Utils.YamlGenerator;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,6 +16,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class KothDataInv extends NavigatorInventory implements Listener {
@@ -36,7 +38,7 @@ public class KothDataInv extends NavigatorInventory implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent event){
-        handleClick(event);
+        final ItemStack itemClicked = handleClick(event);
     }
 
     @Override

@@ -5,7 +5,6 @@ import me.nanigans.pandorakoth.Koth.Utility.ItemUtils;
 import me.nanigans.pandorakoth.Koth.Utility.NBTData;
 import me.nanigans.pandorakoth.Utils.YamlGenerator;
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,7 +36,16 @@ public class KothEditorInv extends NavigatorInventory implements Listener {
 
     @EventHandler
     public void onInvClick(InventoryClickEvent event){
-        handleClick(event);
+        final ItemStack itemClicked = handleClick(event);
+
+        if(itemClicked != null && event.getAction().toString().contains("DROP")){
+            if(NBTData.containsNBT(itemClicked, "isDeletable")){
+                yaml.getData().set(itemClicked.getItemMeta().getDisplayName(), null);
+                yaml.save();
+                this.inventory.removeItem(itemClicked);
+            }
+
+        }
     }
 
     @EventHandler
@@ -85,10 +93,11 @@ public class KothEditorInv extends NavigatorInventory implements Listener {
         short inx = 0;
         for (String key : keys) {
             if(inx <= 45) {
-                final ItemStack item = ItemUtils.createItem(timeIsEnabled(data, key), key, "METHOD~openKoth");
+                final ItemStack item = ItemUtils.createItem(timeIsEnabled(data, key), key, "METHOD~openKoth", "isDeletable~true");
                 if (canDelete) {
                     final ItemMeta meta = item.getItemMeta();
                     meta.setLore(Collections.singletonList("Press Q to delete this KOTH event"));
+                    item.setItemMeta(meta);
                 }
                 inv.setItem(inx, item);
                 inx++;
