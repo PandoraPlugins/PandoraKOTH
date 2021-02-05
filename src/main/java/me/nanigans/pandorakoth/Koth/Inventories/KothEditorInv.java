@@ -104,7 +104,7 @@ public class KothEditorInv extends NavigatorInventory implements Listener {
             }else break;
         }
 
-        final ItemStack newTime = ItemUtils.createItem("160/13", "Create New Time", "METHOD~createKothTime");
+        final ItemStack newTime = ItemUtils.createItem("160/13", "Create New Event", "METHOD~createKothTime");
         inv.setItem(inv.getSize()-5, newTime);
         return inv;
 
