@@ -25,7 +25,6 @@ public class RegionEvents implements Listener {
     @EventHandler
     public void onEnterRegion(RegionEnterEvent event){
         final ProtectedRegion region = event.getRegion();
-        System.out.println("1 = " + 1);
         if (KothEditor.regionContainsFlag(region, "is-koth")) {
             final Player player = event.getPlayer();
             final String regionName = region.getId();
@@ -34,7 +33,6 @@ public class RegionEvents implements Listener {
             usersInRegion.add(player.getUniqueId());
 
             final KothRegions kRegion = getKothRegion(region);
-            System.out.println("kRegion.getCapper() = " + kRegion.getCapper());
 
             final Player capper = kRegion.getCapper();
             if(capper == null) kRegion.setCapper(player);
@@ -57,22 +55,9 @@ public class RegionEvents implements Listener {
 
             final KothRegions kothRegion = getKothRegion(region);
             final Player capper = kothRegion.getCapper();
+            
             if(player.getUniqueId().equals(capper.getUniqueId())){
-
-                final FPlayer fCapper = instance.getByPlayer(capper);
-                final Player sameFactionPlayer = getSameFactionPlayer(regionName, fCapper.getFaction());
-                final EntityDamageEvent lastDamageCause = capper.getLastDamageCause();
-                Entity entity = null;
-                if(lastDamageCause != null){
-                   entity = lastDamageCause.getEntity();
-                }
-                if(sameFactionPlayer != null){
-                    kothRegion.setCapper(sameFactionPlayer);
-                }else if(entity instanceof Player && uuids.contains(entity.getUniqueId())){
-                    kothRegion.setCapper(((Player) entity));
-                }else if(uuids.size() > 0){
-                    kothRegion.setCapper(Bukkit.getPlayer(uuids.get((int) (Math.random()*uuids.size()))));
-                }else kothRegion.setCapper(null);
+                kothRegion.updateCapper(getSameFactionPlayer(regionName, instance.getByPlayer(capper).getFaction()), uuids);
             }
         }
     }
