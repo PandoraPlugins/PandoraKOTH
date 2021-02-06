@@ -65,6 +65,14 @@
     </repositories>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/me.lucko/helper -->
+        <dependency>
+            <groupId>me.lucko</groupId>
+            <artifactId>helper</artifactId>
+            <version>5.6.5</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>

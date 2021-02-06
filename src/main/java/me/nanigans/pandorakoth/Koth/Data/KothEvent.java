@@ -1,12 +1,10 @@
 package me.nanigans.pandorakoth.Koth.Data;
 
+import me.nanigans.pandorakoth.PandoraKOTH;
 import me.nanigans.pandorakoth.Utils.YamlGenerator;
 import org.bukkit.event.Listener;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public class KothEvent extends TimerTask implements Listener {
 
@@ -17,6 +15,7 @@ public class KothEvent extends TimerTask implements Listener {
     protected Scheduling scheduling;
     private boolean isDeleted;
     private static final Map<String, KothEvent> events = new HashMap<>();
+    private static final Map<String, KothEvent> activeEvents = new HashMap<>();
     private Timer eventTimer;
 
     public KothEvent(String kothEventName, YamlGenerator yaml){
@@ -61,6 +60,7 @@ public class KothEvent extends TimerTask implements Listener {
         return events;
     }
 
+
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
         if(enabled && scheduling.getScheduleTime() != 0 && scheduling.getCapDuration() != 0){
@@ -80,6 +80,10 @@ public class KothEvent extends TimerTask implements Listener {
 
     public Scheduling getScheduling() {
         return scheduling;
+    }
+
+    public static Map<String, KothEvent> getActiveEvents() {
+        return activeEvents;
     }
 
     public Rewards getRewards() {
