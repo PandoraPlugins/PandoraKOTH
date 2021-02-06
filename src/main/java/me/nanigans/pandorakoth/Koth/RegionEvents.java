@@ -42,6 +42,10 @@ public class RegionEvents implements Listener {
         }
     }
 
+    /**
+     * Detects when a player leaves a koth region and updates the current capper
+     * @param event region leave event
+     */
     @EventHandler
     public void onLeaveRegion(RegionLeaveEvent event){
         final ProtectedRegion region = event.getRegion();
