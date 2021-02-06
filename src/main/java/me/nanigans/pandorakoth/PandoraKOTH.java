@@ -7,6 +7,7 @@ import com.sk89q.worldguard.protection.flags.StringFlag;
 import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import me.nanigans.pandorakoth.Commands.KothEditor;
+import me.nanigans.pandorakoth.Koth.RegionEvents;
 import me.nanigans.pandorakoth.Utils.YamlGenerator;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -23,6 +24,7 @@ public final class PandoraKOTH extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         getCommand("kothedit").setExecutor(new KothEditor());
+        getServer().getPluginManager().registerEvents(new RegionEvents(), this);
         try {
             YamlGenerator.createFolder("KOTHS");
         } catch (IOException e) {

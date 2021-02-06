@@ -6,13 +6,12 @@ import me.nanigans.pandorakoth.Commands.KothEditor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import java.io.File;
-
 public class RegionEvents implements Listener {
 
     @EventHandler
     public void onEnterRegion(RegionEnterEvent event){
         final ProtectedRegion region = event.getRegion();
+        System.out.println("1 = " + 1);
         if (KothEditor.regionContainsFlag(region, "is-koth")) {
 
 

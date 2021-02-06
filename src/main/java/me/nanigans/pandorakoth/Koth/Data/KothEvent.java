@@ -1,11 +1,14 @@
 package me.nanigans.pandorakoth.Koth.Data;
 
 import me.nanigans.pandorakoth.Utils.YamlGenerator;
+import org.bukkit.event.Listener;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class KothEvent {
+public class KothEvent extends TimerTask implements Listener {
 
     protected YamlGenerator yaml;
     protected String eventName;
@@ -14,6 +17,7 @@ public class KothEvent {
     protected Scheduling scheduling;
     private boolean isDeleted;
     private static final Map<String, KothEvent> events = new HashMap<>();
+    private Timer eventTimer;
 
     public KothEvent(String kothEventName, YamlGenerator yaml){
         this.yaml = yaml;
@@ -24,12 +28,20 @@ public class KothEvent {
         events.put(kothEventName, this);
     }
 
+    @Override
+    public void run() {
+
+
+
+    }
+
     public void delete(){
         isDeleted = true;
         yaml = null;
         eventName = null;
         rewards = null;
         scheduling = null;
+        this.cancel();
         saveEvent();
     }
 
@@ -51,6 +63,11 @@ public class KothEvent {
 
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
+        if(enabled && scheduling.getScheduleTime() != 0 && scheduling.getCapDuration() != 0){
+            final Timer t = new Timer();
+            t.schedule(this, scheduling.getScheduleTime(), scheduling.getScheduleTime());
+            this.eventTimer = t;
+        }else this.cancel();
     }
 
     public String getEventName() {
@@ -72,6 +89,7 @@ public class KothEvent {
     public YamlGenerator getYaml() {
         return yaml;
     }
+
 }
 
 
