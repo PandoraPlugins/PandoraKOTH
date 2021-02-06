@@ -55,8 +55,8 @@ public class RegionEvents implements Listener {
 
             final KothRegions kothRegion = getKothRegion(region);
             final Player capper = kothRegion.getCapper();
-            
-            if(player.getUniqueId().equals(capper.getUniqueId())){
+
+            if(player.getUniqueId().equals(capper.getUniqueId())){//if event player (capper) leaves
                 kothRegion.updateCapper(getSameFactionPlayer(regionName, instance.getByPlayer(capper).getFaction()), uuids);
             }
         }
