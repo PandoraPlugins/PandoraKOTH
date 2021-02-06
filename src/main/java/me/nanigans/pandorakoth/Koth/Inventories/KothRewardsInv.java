@@ -89,22 +89,12 @@ public class KothRewardsInv extends NavigatorInventory implements Listener {
     }
 
     private void removeReward(ItemStack itemClicked){
-        final List<Map<?, ?>> stringList = yaml.getData().getMapList(kothName + ".rewards");
-        final Map<?, ?> id = getRewardFromList(stringList, NBTData.getNBT(itemClicked, "ID"));
+        final List<Map<String, String>> stringList = event.getRewards().getRewardList();
+        final Map<String, String> id = event.getRewards().getRewardFromList(NBTData.getNBT(itemClicked, "ID"));
         if(id != null) {
             stringList.remove(id);
-            yaml.getData().set(kothName + ".rewards", stringList);
-            yaml.save();
             this.inventory.removeItem(itemClicked);
         }
-    }
-
-    private Map<?, ?> getRewardFromList(List<Map<?, ?>> map, String uuid){
-        for (Map<?, ?> map1 : map) {
-            if(map1.get("ID").equals(uuid))
-                return map1;
-        }
-        return null;
     }
 
     private ItemStack swapRewardType(ItemStack itemClicked){
@@ -113,12 +103,11 @@ public class KothRewardsInv extends NavigatorInventory implements Listener {
         RewardType next = RewardType.getByYMLName(rewardType);
         if(next != null) {
             next = next.next();
-            final List<Map<?, ?>> mapList = yaml.getData().getMapList(kothName + ".rewards");
-            final Map<String, String> id = (Map<String, String>) getRewardFromList(mapList, NBTData.getNBT(itemClicked, "ID"));
+            final List<Map<String, String>> mapList = event.getRewards().getRewardList();
+            final Map<String, String> id = event.getRewards().getRewardFromList(NBTData.getNBT(itemClicked, "ID"));
             if(id != null)
-            id.put("rewardType", next.getYamlName());
-            yaml.getData().set(kothName+".rewards", mapList);
-            yaml.save();
+                id.put("rewardType", next.getYamlName());
+            event.getRewards().setRewards(mapList);
 
             return NBTData.setNBT(itemClicked, "rewardType~"+next.getYamlName());
         }
@@ -133,9 +122,7 @@ public class KothRewardsInv extends NavigatorInventory implements Listener {
 
     @EventHandler
     public void onInvClose(InventoryCloseEvent event){
-        if(event.getInventory().equals(this.inventory) && !isSwitching){
-            HandlerList.unregisterAll(this);
-        }
+        handleInvClose(event);
     }
 
     @Override
@@ -159,14 +146,13 @@ public class KothRewardsInv extends NavigatorInventory implements Listener {
         new AwaitInput(player, 20000, msg -> {
 
             if(msg != null) {
-                final List<Map<?, ?>> rewards = yaml.getData().getMapList(kothName + ".rewards");
+                final List<Map<String, String>> rewards = event.getRewards().getRewardList();
                 final Map<String, String> rewardMap = new HashMap<>();
                 rewardMap.put("command", msg);
                 rewardMap.put("rewardType", "Synced");
                 rewardMap.put("ID", UUID.randomUUID().toString());
                 rewards.add(rewardMap);
-                yaml.getData().set(kothName + ".rewards", rewards);
-                yaml.save();
+                event.getRewards().setRewards(rewards);
             }
             new BukkitRunnable() {
                 @Override
@@ -182,12 +168,16 @@ public class KothRewardsInv extends NavigatorInventory implements Listener {
     @Override
     protected Inventory createInventory() {
 
-        final List<Map<?, ?>> rewardsList = yaml.getData().getMapList(kothName + ".rewards");
+        List<Map<String, String>> rewardsList;
+        if(event != null)
+         rewardsList = event.getRewards().getRewardList();
+        else rewardsList = new ArrayList<>();
+
         final int size = calcInvSize(rewardsList.size());
         final Inventory inventory = Bukkit.createInventory(player, size, "Rewards");
         final int loopSize = Math.min(45, rewardsList.size());
         for (int i = 0; i < loopSize; i++) {
-            final Map<String, String> cmd = (Map<String, String>) rewardsList.get(i);
+            final Map<String, String> cmd = rewardsList.get(i);
             final String rewardType = cmd.get("rewardType");
 
              ItemStack item = ItemUtils.createItem(Material.PAPER, cmd.get("command"), "isDeletable~true",

@@ -1,7 +1,6 @@
 package me.nanigans.pandorakoth.Koth.Inventories;
 
 import me.nanigans.pandorakoth.Koth.Utility.ItemUtils;
-import me.nanigans.pandorakoth.Koth.Utility.NBTData;
 import me.nanigans.pandorakoth.Utils.YamlGenerator;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -49,9 +48,7 @@ public class KothDataInv extends NavigatorInventory implements Listener {
 
     @EventHandler
     public void onInvClose(InventoryCloseEvent event){
-        if(event.getInventory().equals(this.inventory) && !isSwitching){
-            HandlerList.unregisterAll(this);
-        }
+        handleInvClose(event);
     }
 
     private void openMessages(ItemStack ignored){
@@ -66,15 +63,13 @@ public class KothDataInv extends NavigatorInventory implements Listener {
 
     private void toggleEnabled(ItemStack item){
 
-        if(KothEditorInv.timeIsEnabled(yaml.getData(), kothName).endsWith("14")){
+        if(!event.isEnabled()){
             inventory.setItem(13, ItemUtils.createItem("160/5", ChatColor.GREEN+"Enabled", "METHOD~toggleEnabled"));
-            yaml.getData().set(kothName+".enabled", true);
+            event.setEnabled(true);
         }else{
             inventory.setItem(13, ItemUtils.createItem("160/14", ChatColor.RED+"Disabled", "METHOD~toggleEnabled"));
-            yaml.getData().set(kothName+".enabled", false);
+            event.setEnabled(false);
         }
-        yaml.save();
-
     }
 
     private void setTime(ItemStack item){
@@ -84,6 +79,7 @@ public class KothDataInv extends NavigatorInventory implements Listener {
 
     @Override
     protected void back(ItemStack ignored) {
+        event.saveEvent();
         HandlerList.unregisterAll(this);
         swapInventories(new KothEditorInv(yaml, player, kothName));
     }
@@ -97,10 +93,6 @@ public class KothDataInv extends NavigatorInventory implements Listener {
         inv.setItem(13, ItemUtils.createItem(KothEditorInv.timeIsEnabled(yaml.getData(), kothName), "Toggle Event", "METHOD~toggleEnabled"));
         inv.setItem(15, ItemUtils.createItem(Material.WATCH, "Set Time", "METHOD~setTime"));
         inv.setItem(22, ItemUtils.createItem(Material.COMPASS, "Back", "METHOD~back"));
-        if(yaml.isNew()){
-            yaml.getData().set(kothEventName+".enabled", false);
-            yaml.save();
-        }
 
         return inv;
     }

@@ -1,12 +1,15 @@
 package me.nanigans.pandorakoth.Koth.Inventories;
 
+import me.nanigans.pandorakoth.Koth.Data.KothEvent;
 import me.nanigans.pandorakoth.Koth.Utility.NBTData;
 import me.nanigans.pandorakoth.PandoraKOTH;
 import me.nanigans.pandorakoth.Utils.YamlGenerator;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -23,6 +26,7 @@ public abstract class NavigatorInventory implements Listener{
     protected boolean isSwitching = false;
     protected final static PandoraKOTH plugin = PandoraKOTH.getPlugin(PandoraKOTH.class);
     protected Inventory inventory;
+    protected KothEvent event;
 
     public NavigatorInventory(Player player, YamlGenerator yaml, String kothName){
         this.player = player;
@@ -47,12 +51,20 @@ public abstract class NavigatorInventory implements Listener{
         return null;
     }
 
+    protected void handleInvClose(InventoryCloseEvent event){
+        if(event.getInventory().equals(this.inventory) && !isSwitching){
+            HandlerList.unregisterAll(this);
+            this.event.saveEvent();
+        }
+    }
+
     protected abstract void execute(String method, ItemStack item);
 
     protected abstract void back(ItemStack ignored);
 
     protected void swapInventories(NavigatorInventory inv){
         isSwitching = true;
+        inv.event = event;
         final Inventory inventory = inv.createInventory();
         inv.inventory = inventory;
         player.openInventory(inventory);

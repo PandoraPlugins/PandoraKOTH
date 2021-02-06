@@ -65,7 +65,7 @@ public class KothEditor implements CommandExecutor {
         return false;
     }
 
-    private static boolean regionContainsFlag(ProtectedRegion region, String name){
+    public static boolean regionContainsFlag(ProtectedRegion region, String name){
         for (Map.Entry<Flag<?>, Object> flagObjectEntry : region.getFlags().entrySet()) {
             if (flagObjectEntry.getKey().getName().equals(name)) {
                 return true;

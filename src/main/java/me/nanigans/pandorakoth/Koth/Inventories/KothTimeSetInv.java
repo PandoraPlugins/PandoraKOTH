@@ -38,9 +38,7 @@ public class KothTimeSetInv extends NavigatorInventory implements Listener {
 
     @EventHandler
     public void onInvClose(InventoryCloseEvent event){
-        if(event.getInventory().equals(this.inventory) && !isSwitching){
-            HandlerList.unregisterAll(this);
-        }
+        handleInvClose(event);
     }
 
     @EventHandler
@@ -71,8 +69,12 @@ public class KothTimeSetInv extends NavigatorInventory implements Listener {
             if(msg != null) {
                 try {
                     final long time = DateParser.parseDateDiff(msg, true) - System.currentTimeMillis();
-                    yaml.getData().set(kothEventName+".times."+path, time);
-                    yaml.save();
+                    switch (path) {
+                        case "scheduleTime": event.getScheduling().setScheduleTime(time);
+                        break;
+                        case "capDuration": event.getScheduling().setCapDuration(time);
+                        break;
+                    }
                     openInv();
                 } catch (Exception e) {
                     isSwitching = false;
@@ -114,7 +116,7 @@ public class KothTimeSetInv extends NavigatorInventory implements Listener {
         final Inventory inv = Bukkit.createInventory(player, 18, "Event Time");
 
         final ItemStack captureDuration = ItemUtils.createItem(Material.REDSTONE_TORCH_ON, "Capture Duration", "METHOD~setCapDuration");
-        final long capDurationMilli = yaml.getData().getLong(kothEventName + ".times.capDuration");
+        final long capDurationMilli = event.getScheduling().getCapDuration();
         if(capDurationMilli != 0) {
             final String date = DateParser.formatDateDiff(capDurationMilli+System.currentTimeMillis());
             ItemUtils.setLore(captureDuration, date);
@@ -122,7 +124,7 @@ public class KothTimeSetInv extends NavigatorInventory implements Listener {
         inv.setItem(3, captureDuration);
 
         final ItemStack scheduleEventTime = ItemUtils.createItem(Material.WATCH, "Schedule Event Time", "METHOD~scheduleTime");
-        final long aLong = yaml.getData().getLong(kothEventName + ".times.scheduleTime");
+        final long aLong = event.getScheduling().getScheduleTime();
         if(aLong != 0){
             ItemUtils.setLore(scheduleEventTime, DateParser.formatDateDiff(aLong+System.currentTimeMillis()));
         }
