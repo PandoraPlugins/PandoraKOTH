@@ -117,6 +117,7 @@ public class KothTimeSetInv extends NavigatorInventory implements Listener {
 
         final ItemStack captureDuration = ItemUtils.createItem(Material.REDSTONE_TORCH_ON, "Capture Duration", "METHOD~setCapDuration");
         final long capDurationMilli = event.getScheduling().getCapDuration();
+        System.out.println("capDurationMilli = " + capDurationMilli);
         if(capDurationMilli != 0) {
             final String date = DateParser.formatDateDiff(capDurationMilli+System.currentTimeMillis());
             ItemUtils.setLore(captureDuration, date);

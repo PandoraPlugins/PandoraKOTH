@@ -3,18 +3,18 @@ package me.nanigans.pandorakoth.Koth.Data;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Scheduling{
+public class SchedulingData {
 
     private final KothEvent kothEvent;
     private Map<String, Long> timings = new HashMap<>();
     private long scheduleTime;
     private long capDuration;
 
-    public Scheduling(KothEvent kothEvent) {
+    public SchedulingData(KothEvent kothEvent) {
         this.kothEvent = kothEvent;
 
         final long schedule = kothEvent.getYaml().getData().getLong(kothEvent.getEventName() + ".times.scheduleTime");
-        final long duration = kothEvent.getYaml().getData().getLong(kothEvent.getEventName() + ".capDuration");
+        final long duration = kothEvent.getYaml().getData().getLong(kothEvent.getEventName() + ".times.capDuration");
         this.scheduleTime = schedule;
         this.capDuration = duration;
         timings.put("scheduleTime", schedule);

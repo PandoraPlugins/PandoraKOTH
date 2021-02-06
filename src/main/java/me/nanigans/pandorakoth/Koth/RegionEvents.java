@@ -3,18 +3,15 @@ package me.nanigans.pandorakoth.Koth;
 import com.massivecraft.factions.FPlayer;
 import com.massivecraft.factions.FPlayers;
 import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.struct.Relation;
 import com.mewin.WGRegionEvents.events.RegionEnterEvent;
 import com.mewin.WGRegionEvents.events.RegionLeaveEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.nanigans.pandorakoth.Commands.KothEditor;
 import me.nanigans.pandorakoth.Koth.Data.KothRegions;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
 
 import java.util.*;
 

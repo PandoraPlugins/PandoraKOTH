@@ -17,13 +17,17 @@ public class KothRegions {
     private final static Map<String, KothRegions> kothRegions = new HashMap<>();
     private final ProtectedRegion region;
     private Player capper;
-    private final static FPlayers instance = FPlayers.getInstance();
 
     public KothRegions(ProtectedRegion region) {
         this.region = region;
         kothRegions.put(region.getId(), this);
     }
 
+    /**
+     * Updates
+     * @param sameFactionPlayer another player in the same faction to give the cap to
+     * @param uuids a list of people in the region
+     */
     public void updateCapper(Player sameFactionPlayer, List<UUID> uuids){
 
         final EntityDamageEvent lastDamageCause = capper.getLastDamageCause();

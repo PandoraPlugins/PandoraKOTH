@@ -49,6 +49,7 @@ public class AwaitInput extends BukkitRunnable implements Listener {
 
         if(event.getPlayer().getUniqueId().equals(this.player.getUniqueId())){
             this.message = event.getMessage();
+            event.setCancelled(true);
         }
 
     }
