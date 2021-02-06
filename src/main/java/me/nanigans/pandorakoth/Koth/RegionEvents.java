@@ -58,8 +58,10 @@ public class RegionEvents implements Listener {
                 final FPlayer fCapper = instance.getByPlayer(capper);
                 final Player sameFactionPlayer = getSameFactionPlayer(regionName, fCapper.getFaction());
                 final EntityDamageEvent lastDamageCause = capper.getLastDamageCause();
-                final Entity entity = lastDamageCause.getEntity();
-
+                Entity entity = null;
+                if(lastDamageCause != null){
+                   entity = lastDamageCause.getEntity();
+                }
                 if(sameFactionPlayer != null){
                     kothRegion.setCapper(sameFactionPlayer);
                 }else if(entity instanceof Player && uuids.contains(entity.getUniqueId())){
