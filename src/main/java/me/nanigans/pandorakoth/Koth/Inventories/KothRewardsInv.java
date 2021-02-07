@@ -1,5 +1,6 @@
 package me.nanigans.pandorakoth.Koth.Inventories;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.nanigans.pandorakoth.Koth.Utility.ItemUtils;
 import me.nanigans.pandorakoth.Koth.Utility.NBTData;
 import me.nanigans.pandorakoth.Utils.AwaitInput;
@@ -65,8 +66,8 @@ public class KothRewardsInv extends NavigatorInventory implements Listener {
         put("swapRewardType", KothRewardsInv.this::swapRewardType);
     }};
 
-    public KothRewardsInv(Player player, YamlGenerator yaml, String kothName) {
-        super(player, yaml, kothName);
+    public KothRewardsInv(Player player, YamlGenerator yaml, String kothName, ProtectedRegion region) {
+        super(player, yaml, kothName, region);
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -128,7 +129,7 @@ public class KothRewardsInv extends NavigatorInventory implements Listener {
     @Override
     protected void back(ItemStack ignored) {
         HandlerList.unregisterAll(this);
-        swapInventories(new KothDataInv(player, yaml, kothName));
+        swapInventories(new KothDataInv(player, yaml, kothName, region));
     }
 
     /**
@@ -158,7 +159,7 @@ public class KothRewardsInv extends NavigatorInventory implements Listener {
                 @Override
                 public void run() {
                     HandlerList.unregisterAll(KothRewardsInv.this);
-                    swapInventories(new KothRewardsInv(player, yaml, kothName));
+                    swapInventories(new KothRewardsInv(player, yaml, kothName, region));
                 }
             }.runTask(plugin);
         }).runTaskAsynchronously(plugin);

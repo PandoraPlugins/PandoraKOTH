@@ -9,21 +9,34 @@ public class SchedulingData {
     private Map<String, Long> timings = new HashMap<>();
     private long scheduleTime;
     private long capDuration;
+    private long eventDuration;
 
     public SchedulingData(KothEvent kothEvent) {
         this.kothEvent = kothEvent;
 
         final long schedule = kothEvent.getYaml().getData().getLong(kothEvent.getEventName() + ".times.scheduleTime");
         final long duration = kothEvent.getYaml().getData().getLong(kothEvent.getEventName() + ".times.capDuration");
+        final long eventDuration = kothEvent.getYaml().getData().getLong(kothEvent.getEventName()+".times.eventDuration");
+        this.eventDuration = eventDuration;
         this.scheduleTime = schedule;
         this.capDuration = duration;
         timings.put("scheduleTime", schedule);
         timings.put("capDuration", duration);
+        timings.put("eventDuration", eventDuration);
 
     }
 
     public long getScheduleTime() {
         return scheduleTime;
+    }
+
+    public void setEventDuration(long eventDuration){
+        this.eventDuration = eventDuration;
+        timings.replace("eventDuration", eventDuration);
+    }
+
+    public long getEventDuration() {
+        return eventDuration;
     }
 
     public void setScheduleTime(long scheduleTime) {

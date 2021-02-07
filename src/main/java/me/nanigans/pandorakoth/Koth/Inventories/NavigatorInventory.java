@@ -1,5 +1,6 @@
 package me.nanigans.pandorakoth.Koth.Inventories;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.nanigans.pandorakoth.Koth.Data.KothEvent;
 import me.nanigans.pandorakoth.Koth.Utility.NBTData;
 import me.nanigans.pandorakoth.PandoraKOTH;
@@ -27,11 +28,13 @@ public abstract class NavigatorInventory implements Listener{
     protected final static PandoraKOTH plugin = PandoraKOTH.getPlugin(PandoraKOTH.class);
     protected Inventory inventory;
     protected KothEvent event;
+    protected ProtectedRegion region;
 
-    public NavigatorInventory(Player player, YamlGenerator yaml, String kothName){
+    public NavigatorInventory(Player player, YamlGenerator yaml, String kothName, ProtectedRegion region){
         this.player = player;
         this.yaml = yaml;
         this.kothName = kothName;
+        this.region = region;
     }
 
     protected ItemStack handleClick(InventoryClickEvent event){
@@ -54,6 +57,7 @@ public abstract class NavigatorInventory implements Listener{
     protected void handleInvClose(InventoryCloseEvent event){
         if(event.getInventory().equals(this.inventory) && !isSwitching){
             HandlerList.unregisterAll(this);
+            if(this.event != null)
             this.event.saveEvent();
         }
     }
@@ -67,6 +71,7 @@ public abstract class NavigatorInventory implements Listener{
         inv.event = event;
         final Inventory inventory = inv.createInventory();
         inv.inventory = inventory;
+        inv.region = this.region;
         player.openInventory(inventory);
         isSwitching = false;
     }

@@ -1,5 +1,6 @@
 package me.nanigans.pandorakoth.Koth.Inventories;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.nanigans.pandorakoth.Koth.Utility.ItemUtils;
 import me.nanigans.pandorakoth.Utils.YamlGenerator;
 import org.bukkit.Bukkit;
@@ -23,14 +24,13 @@ public class KothDataInv extends NavigatorInventory implements Listener {
         put("openRewards", KothDataInv.this::openRewards);
         put("toggleEnabled", KothDataInv.this::toggleEnabled);
         put("setTime", KothDataInv.this::setTime);
-        put("openMessages", KothDataInv.this::openMessages);
         put("back", KothDataInv.this::back);
     }};
 
     private final String kothEventName;
 
-    public KothDataInv(Player player, YamlGenerator yaml, String kothEventName) {
-        super(player, yaml, kothEventName);
+    public KothDataInv(Player player, YamlGenerator yaml, String kothEventName, ProtectedRegion region) {
+        super(player, yaml, kothEventName, region);
         this.kothEventName = kothEventName;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
@@ -51,14 +51,10 @@ public class KothDataInv extends NavigatorInventory implements Listener {
         handleInvClose(event);
     }
 
-    private void openMessages(ItemStack ignored){
-        HandlerList.unregisterAll(this);
-        swapInventories(new MessageInv(player, yaml, kothName));
-    }
 
     private void openRewards(ItemStack item){
         HandlerList.unregisterAll(this);
-        swapInventories(new KothRewardsInv(player, yaml, kothName));
+        swapInventories(new KothRewardsInv(player, yaml, kothName, region));
     }
 
     private void toggleEnabled(ItemStack item){
@@ -74,14 +70,14 @@ public class KothDataInv extends NavigatorInventory implements Listener {
 
     private void setTime(ItemStack item){
         HandlerList.unregisterAll(this);
-        swapInventories(new KothTimeSetInv(player, yaml, kothName, kothEventName));
+        swapInventories(new KothTimeSetInv(player, yaml, kothName, kothEventName, region));
     }
 
     @Override
     protected void back(ItemStack ignored) {
         event.saveEvent();
         HandlerList.unregisterAll(this);
-        swapInventories(new KothEditorInv(yaml, player, kothName));
+        swapInventories(new KothEditorInv(yaml, player, kothName, region));
     }
 
     @Override

@@ -37,7 +37,7 @@ public class KothEditor implements CommandExecutor {
                             if(regionContainsFlag(region, "is-koth")) {
                                 final File file = new File(plugin.getDataFolder().getAbsolutePath() + "/KOTHS/" + regionName + ".yml");
                                 final YamlGenerator yamlGenerator = new YamlGenerator(file.getAbsolutePath());
-                                new KothEditorInv(yamlGenerator, player, regionName);
+                                new KothEditorInv(yamlGenerator, player, regionName, region);
                             }else{
                                 player.sendMessage(ChatColor.RED+"This region is not a koth region");
                             }

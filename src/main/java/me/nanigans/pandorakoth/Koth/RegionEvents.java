@@ -16,7 +16,7 @@ import org.bukkit.event.Listener;
 import java.util.*;
 
 public class RegionEvents implements Listener {
-    private static final Map<String, List<UUID>> playersInRegions = new HashMap<>();
+    private static final Map<String, KothRegions> playersInRegions = new HashMap<>();
     private final FPlayers instance = FPlayers.getInstance();
 
     @EventHandler
@@ -25,14 +25,15 @@ public class RegionEvents implements Listener {
         if (KothEditor.regionContainsFlag(region, "is-koth")) {
             final Player player = event.getPlayer();
             final String regionName = region.getId();
-            if(!playersInRegions.containsKey(regionName)) playersInRegions.put(regionName, new ArrayList<>());
-            final List<UUID> usersInRegion = playersInRegions.get(regionName);
+
+            if(!playersInRegions.containsKey(regionName)) playersInRegions.put(regionName, new KothRegions(region));
+            final KothRegions kothRegion = playersInRegions.get(regionName);
+
+            final List<UUID> usersInRegion = kothRegion.getPlayersInRegion();
             usersInRegion.add(player.getUniqueId());
 
-            final KothRegions kRegion = getKothRegion(region);
-
-            final Player capper = kRegion.getCapper();
-            if(capper == null) kRegion.setCapper(player);
+            final Player capper = kothRegion.getCapper();
+            if(capper == null) kothRegion.setCapper(player);
 
         }
     }
@@ -47,10 +48,9 @@ public class RegionEvents implements Listener {
         if (KothEditor.regionContainsFlag(region, "is-koth")) {
             final String regionName = region.getId();
             final Player player = event.getPlayer();
-            final List<UUID> uuids = playersInRegions.get(regionName);
+            final KothRegions kothRegion = playersInRegions.get(regionName);
+            final List<UUID> uuids = kothRegion.getPlayersInRegion();
             uuids.remove(player.getUniqueId());
-
-            final KothRegions kothRegion = getKothRegion(region);
             final Player capper = kothRegion.getCapper();
 
             if(player.getUniqueId().equals(capper.getUniqueId())){//if event player (capper) leaves
@@ -61,7 +61,7 @@ public class RegionEvents implements Listener {
 
     private Player getSameFactionPlayer(String kothRegion, Faction inFaction){
 
-        final List<UUID> uuids = playersInRegions.get(kothRegion);
+        final List<UUID> uuids = playersInRegions.get(kothRegion).getPlayersInRegion();
         final Set<FPlayer> fPlayers = inFaction.getFPlayers();
         for (UUID uuid : uuids) {
             final Player player = Bukkit.getPlayer(uuid);
@@ -71,17 +71,6 @@ public class RegionEvents implements Listener {
             }
         }
         return null;
-    }
-
-    private KothRegions getKothRegion(ProtectedRegion region){
-
-        final KothRegions kRegion;
-        final String regionName = region.getId();
-        if (!KothRegions.getKothRegions().containsKey(regionName)) {
-            kRegion = new KothRegions(region);
-        }else kRegion = KothRegions.getKothRegions().get(regionName);
-
-        return kRegion;
     }
 
 }

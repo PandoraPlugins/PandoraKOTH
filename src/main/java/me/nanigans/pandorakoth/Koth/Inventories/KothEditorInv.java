@@ -1,6 +1,7 @@
 package me.nanigans.pandorakoth.Koth.Inventories;
 
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.nanigans.pandorakoth.Koth.Data.KothEvent;
 import me.nanigans.pandorakoth.Koth.Utility.ItemUtils;
 import me.nanigans.pandorakoth.Koth.Utility.NBTData;
@@ -33,8 +34,8 @@ public class KothEditorInv extends NavigatorInventory implements Listener {
         put("createKothTime", KothEditorInv.this::createKothTime);
     }};
 
-    public KothEditorInv(YamlGenerator yaml, Player player, String kothArea){
-        super(player, yaml, kothArea.split("_")[0]);
+    public KothEditorInv(YamlGenerator yaml, Player player, String kothArea, ProtectedRegion region){
+        super(player, yaml, kothArea.split("_")[0], region);
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         swapInventories(this);
     }
@@ -64,9 +65,9 @@ public class KothEditorInv extends NavigatorInventory implements Listener {
         final String kothName = item.getItemMeta().getDisplayName();
         if(KothEvent.getEvents().containsKey(kothName))
             this.event = KothEvent.getEvents().get(kothName);
-        else this.event = new KothEvent(kothName, yaml);
+        else this.event = new KothEvent(kothName, yaml, region);
         HandlerList.unregisterAll(this);
-        swapInventories(new KothDataInv(player, yaml, kothName));
+        swapInventories(new KothDataInv(player, yaml, kothName, region));
 
     }
 
@@ -82,9 +83,9 @@ public class KothEditorInv extends NavigatorInventory implements Listener {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        event = new KothEvent(name, yaml);
+                        event = new KothEvent(name, yaml, region);
                         HandlerList.unregisterAll(KothEditorInv.this);
-                        swapInventories(new KothDataInv(player, yaml, name));
+                        swapInventories(new KothDataInv(player, yaml, name, region));
                     }
                 }.runTask(plugin);
             }else swapInventories(this);

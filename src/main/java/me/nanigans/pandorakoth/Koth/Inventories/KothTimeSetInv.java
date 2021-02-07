@@ -1,5 +1,6 @@
 package me.nanigans.pandorakoth.Koth.Inventories;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.nanigans.pandorakoth.Koth.Utility.ItemUtils;
 import me.nanigans.pandorakoth.Utils.AwaitInput;
 import me.nanigans.pandorakoth.Utils.DateParser;
@@ -27,11 +28,12 @@ public class KothTimeSetInv extends NavigatorInventory implements Listener {
     private final Map<String, Methods> methods = new HashMap<String, Methods>(){{
         put("scheduleTime", KothTimeSetInv.this::scheduleTime);
         put("setCapDuration", KothTimeSetInv.this::setCapDuration);
+        put("setEventDuration", KothTimeSetInv.this::setEventDuration);
         put("back", KothTimeSetInv.this::back);
     }};
 
-    public KothTimeSetInv(Player player, YamlGenerator yaml, String kothName, String kothEventName) {
-        super(player, yaml, kothName);
+    public KothTimeSetInv(Player player, YamlGenerator yaml, String kothName, String kothEventName, ProtectedRegion region) {
+        super(player, yaml, kothName, region);
         this.kothEventName = kothEventName;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
@@ -50,6 +52,13 @@ public class KothTimeSetInv extends NavigatorInventory implements Listener {
 
         new Title().send(player, ChatColor.GOLD+"Input a time to repeat", "20 seconds", 10, 40, 10);
         input("scheduleTime");
+
+    }
+
+    private void setEventDuration(ItemStack ignored){
+
+        new Title().send(player, ChatColor.GOLD+"Input event duration", "20 seconds", 10, 40, 10);
+        input("eventDuration");
 
     }
 
@@ -74,6 +83,7 @@ public class KothTimeSetInv extends NavigatorInventory implements Listener {
                         break;
                         case "capDuration": event.getScheduling().setCapDuration(time);
                         break;
+                        case "eventDuration": event.getScheduling().setEventDuration(time);
                     }
                     openInv();
                 } catch (Exception e) {
@@ -92,7 +102,7 @@ public class KothTimeSetInv extends NavigatorInventory implements Listener {
             @Override
             public void run() {
                 HandlerList.unregisterAll(KothTimeSetInv.this);
-                swapInventories(new KothTimeSetInv(player, yaml, kothName, kothEventName));
+                swapInventories(new KothTimeSetInv(player, yaml, kothName, kothEventName, region));
             }
         }.runTask(plugin);
     }
@@ -107,7 +117,7 @@ public class KothTimeSetInv extends NavigatorInventory implements Listener {
     @Override
     protected void back(ItemStack ignored) {
         HandlerList.unregisterAll(this);
-        swapInventories(new KothDataInv(player, yaml, kothName));
+        swapInventories(new KothDataInv(player, yaml, kothName, region));
     }
 
     @Override
@@ -117,19 +127,26 @@ public class KothTimeSetInv extends NavigatorInventory implements Listener {
 
         final ItemStack captureDuration = ItemUtils.createItem(Material.REDSTONE_TORCH_ON, "Capture Duration", "METHOD~setCapDuration");
         final long capDurationMilli = event.getScheduling().getCapDuration();
-        System.out.println("capDurationMilli = " + capDurationMilli);
         if(capDurationMilli != 0) {
             final String date = DateParser.formatDateDiff(capDurationMilli+System.currentTimeMillis());
             ItemUtils.setLore(captureDuration, date);
         }
-        inv.setItem(3, captureDuration);
 
         final ItemStack scheduleEventTime = ItemUtils.createItem(Material.WATCH, "Schedule Event Time", "METHOD~scheduleTime");
         final long aLong = event.getScheduling().getScheduleTime();
         if(aLong != 0){
             ItemUtils.setLore(scheduleEventTime, DateParser.formatDateDiff(aLong+System.currentTimeMillis()));
         }
-        inv.setItem(5, scheduleEventTime);
+
+        final ItemStack eventDurationTime = ItemUtils.createItem(Material.ARROW, "Event Duration", "METHOD~setEventDuration");
+        final long eventDur = event.getScheduling().getEventDuration();
+        if(eventDur != 0){
+            ItemUtils.setLore(eventDurationTime, DateParser.formatDateDiff(eventDur+System.currentTimeMillis()));
+        }
+
+        inv.setItem(2, captureDuration);
+        inv.setItem(4, eventDurationTime);
+        inv.setItem(6, scheduleEventTime);
         inv.setItem(13, ItemUtils.createItem(Material.COMPASS, "Back", "METHOD~back"));
         return inv;
     }
